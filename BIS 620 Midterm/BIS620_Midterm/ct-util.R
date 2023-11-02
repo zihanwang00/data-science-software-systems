@@ -82,7 +82,7 @@ plot_phase_histogram = function(x) {
 #' @return A tibble with a `date` column and a `count` of the number of
 #' concurrent trials at that date.
 get_concurrent_trials = function(d) {
-  # browser()
+
   # Get all of the unique dates.
   all_dates = d |> 
     pivot_longer(cols = everything()) |> # make start_date, completion_date in one column
@@ -99,7 +99,7 @@ get_concurrent_trials = function(d) {
   # Get the number of concurrent trials at each of the unique dates.
   all_dates$count = 
     map_dbl(
-      # 在purrr package
+
       all_dates$date, 
       ~ .x |> 
         within_date(d$start_date, d$completion_date) |>
@@ -111,7 +111,7 @@ get_concurrent_trials = function(d) {
 # Get top 10 frequent number of conditions by a brief title keyword search and sponsor type
 #' @param d the studies to get the number of conditions trials for.
 #' @return A tibble with a `name` column and a `n` of the number of conditions
-get_num_condition = function(d) {
+get_condition_histogram = function(d) {
   num_con = d |>
     inner_join(conditions|> collect(), by="nct_id")|>
     select(name)|>
@@ -121,7 +121,12 @@ get_num_condition = function(d) {
     head(10)|>
     collect()
   
-  return(num_con)
+  ggplot(num_con, aes(x=name, y=n))+
+    geom_col()+
+    theme_bw()+
+    xlab("Condition")+
+    ylab("Count")
+
 }
 
 plot_concurrent_studies = function(studies) {

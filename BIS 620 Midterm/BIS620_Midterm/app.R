@@ -94,12 +94,8 @@ server <- function(input, output) {
   
   output$condition_plot = renderPlot({
     get_studies()|>
-      get_num_condition() |>
-      ggplot(aes(x=name, y=n))+
-      geom_col()+
-      theme_bw()+
-      xlab("Condition")+
-      ylab("Count")
+      get_condition_histogram()
+
   })
   
   output$trial_table = renderDataTable({
