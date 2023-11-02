@@ -22,17 +22,19 @@ ui <- fluidPage(
   sidebarLayout(
     position = 'left',
     sidebarPanel(
-      textInput("brief_title_kw", "Brief title keywords"),
-      checkboxGroupInput("source_class", 
-                         label = h3("Sponsor Type"),
-                         choices = list("Federal" = "FED", 
-                                        "Individual" = "INDIV", 
-                                        "Industry" = "INDUSTRY", 
-                                        "Network" = "NETWORK", 
-                                        "NTH" = "NTH",
-                                        "Other" = "OTHER", 
-                                        "Other gov" = "OTHER_GOV", 
-                                        "Unknown" = "Unknown")),
+      textInput("brief_title_kw", h3("Brief title keywords")),
+      # Q3: Add a drop-down on sponsor type
+      selectInput("source_class", 
+                  label = h3("Sponsor Type"),
+                  choices = list("Federal" = "FED", 
+                                 "Individual" = "INDIV", 
+                                 "Industry" = "INDUSTRY", 
+                                 "Network" = "NETWORK", 
+                                 "NTH" = "NTH",
+                                 "Other" = "OTHER", 
+                                 "Other gov" = "OTHER_GOV", 
+                                 "Unknown" = "Unknown"),
+                  multiple = TRUE),
     ),
     
     # Show a plot of the generated distribution
@@ -63,9 +65,10 @@ server <- function(input, output) {
       ret = studies
     }
     
+    # if input is NULL, return all values
     if (!is.null(input$source_class)) {
       ret = ret |> 
-        filter(source_class %in% !!input$source_class) # '!!': use the value it's pointing to
+        filter(source_class %in% !!input$source_class) 
     }
     ret |>
       head(max_num_studies) |>
