@@ -43,7 +43,8 @@ ui <- fluidPage(
         type = "tabs",
         tabPanel("Phase", plotOutput("phase_plot")),
         tabPanel("Concurrent", plotOutput("concurrent_plot")),
-        tabPanel("Conditions", plotOutput("condition_plot"))
+        tabPanel("Conditions", plotOutput("condition_plot")),
+        tabPanel("World Map", plotOutput("world_map_plot")),
       ),
       dataTableOutput("trial_table")
     )
@@ -73,6 +74,8 @@ server <- function(input, output) {
     ret |>
       head(max_num_studies) |>
       collect()
+    
+    
   })
   
   
@@ -96,6 +99,11 @@ server <- function(input, output) {
     get_studies()|>
       get_condition_histogram()
 
+  })
+  
+  output$world_map_plot = renderPlot({
+    get_studies()|>
+      plot_country_map()
   })
   
   output$trial_table = renderDataTable({
