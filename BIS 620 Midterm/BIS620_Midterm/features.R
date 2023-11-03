@@ -7,3 +7,13 @@
 #' @param 
 #' @param 
 #' @param 
+
+# Feature 2: Create a condition keyword search to filter condition plot, update on condition plot
+#' @title Condition Keyword Search
+#' @description 
+#' @motivation 
+#' @implementation
+#' 
+#' @param 
+#' @param 
+#' @param 
