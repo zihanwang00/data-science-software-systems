@@ -120,7 +120,8 @@ server <- function(input, output) {
       theme_bw()+
       xlab("Condition")+
       ylab("Count") + 
-      title("Top 6 Conditions by Condition Name")
+      title("Top 6 Conditions by Condition Name") + 
+      theme(axis.text.x = element_text(angle = 30, hjust = 1))
 
   })
   

@@ -113,18 +113,18 @@ get_concurrent_trials = function(d) {
   return(all_dates)
 }
 
-# Get top 10 frequent number of conditions by a brief title keyword search and sponsor type
+# Get top 8 frequent number of conditions by a brief title keyword search and sponsor type
 #' @param d the studies to get the number of studies trials for.
 
 get_condition_histogram = function(study, condition) {
   
   num_con = study |>
-    left_join(condition, by="nct_id") |>
+    inner_join(condition, by="nct_id") |>
     select(name)|>
     group_by(name)|>
     summarize(n=n(), .groups = "drop") |>
     arrange(desc(n))|>
-    head(6)
+    head(8)
     
   return(num_con)
 }
