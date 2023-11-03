@@ -116,22 +116,17 @@ get_concurrent_trials = function(d) {
 # Get top 10 frequent number of conditions by a brief title keyword search and sponsor type
 #' @param d the studies to get the number of studies trials for.
 
-get_condition_histogram = function(d) {
-  num_con = d |>
-    inner_join(conditions|> collect(), by="nct_id")|>
+get_condition_histogram = function(study, condition) {
+  
+  num_con = study |>
+    left_join(condition, by="nct_id") |>
     select(name)|>
     group_by(name)|>
-    summarize(n=n())|>
+    summarize(n=n(), .groups = "drop") |>
     arrange(desc(n))|>
-    head(10)|>
-    collect()
-  
-  ggplot(num_con, aes(x=name, y=n))+
-    geom_col()+
-    theme_bw()+
-    xlab("Condition")+
-    ylab("Count")
-
+    head(6)
+    
+  return(num_con)
 }
 
 # Feature 1: Map of trials
