@@ -22,7 +22,8 @@ ui <- fluidPage(
   sidebarLayout(
     position = 'left',
     sidebarPanel(
-      textInput("brief_title_kw", h3("Brief title keywords")),
+      textInput("brief_title_kw", h3("Brief Title Keywords")),
+      textInput("condition_kw", h3("Condition Names")),
       # Q3: Add a drop-down on sponsor type
       selectInput("source_class", 
                   label = h3("Sponsor Type"),
@@ -75,9 +76,22 @@ server <- function(input, output) {
       head(max_num_studies) |>
       collect()
     
-    
   })
   
+  # Feature2: Add a conditions input to search for conditions based on keywords
+  get_conditions = reactive({
+    if (input$condition_kw != "") {
+      si = input$condition_kw |>
+        strsplit(",") |>
+        unlist() |>
+        trimws()
+      ret2 = query_kwds(conditions, si, "name", match_all = FALSE)
+    } else {
+      ret2 = conditions
+    }
+    ret2 |>
+      collect()
+  })
   
   output$phase_plot = renderPlot({
     get_studies() |>
@@ -96,8 +110,17 @@ server <- function(input, output) {
   })
   
   output$condition_plot = renderPlot({
-    get_studies()|>
-      get_condition_histogram()
+    # Feature2: update on condition plot
+    study = get_studies()
+    condition = get_conditions()
+    condition_data <- get_condition_histogram(study, condition) 
+    
+    ggplot(condition_data, aes(x=name, y=n)) +
+      geom_col()+
+      theme_bw()+
+      xlab("Condition")+
+      ylab("Count") + 
+      title("Top 6 Conditions by Condition Name")
 
   })
   
