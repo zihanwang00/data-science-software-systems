@@ -6,6 +6,10 @@ library(DT)
 library(ggplot2)
 library(tidyr)
 library(purrr)
+library(countrycode)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(RColorBrewer)
 
 
 con = dbConnect(
@@ -21,6 +25,7 @@ if (length(dbListTables(con)) == 0) {
 studies = tbl(con, "studies")
 sponsors = tbl(con, "sponsors")
 conditions = tbl(con, "conditions")
+countries = tbl(con, "countries")
 
 # Q1: get unique phase_levels
 phase_levels <- studies |>
@@ -109,8 +114,8 @@ get_concurrent_trials = function(d) {
 }
 
 # Get top 10 frequent number of conditions by a brief title keyword search and sponsor type
-#' @param d the studies to get the number of conditions trials for.
-#' @return A tibble with a `name` column and a `n` of the number of conditions
+#' @param d the studies to get the number of studies trials for.
+
 get_condition_histogram = function(d) {
   num_con = d |>
     inner_join(conditions|> collect(), by="nct_id")|>
@@ -128,6 +133,36 @@ get_condition_histogram = function(d) {
     ylab("Count")
 
 }
+
+# Feature 1: Map of trials
+# Create a map showing the number of trials in each country by a brief title keyword search
+#' @param d the studies to get the number of studies trials for.
+
+plot_country_map <- function(d){
+  countries$name[is.na(countries$name)] = "NA"
+  
+  aggregated_data = d |>
+    inner_join(countries|> collect(), by="nct_id") |>
+    group_by(name) |>
+    summarize(n=n()) |>
+    ungroup()
+  aggregated_data$name <- countrycode(aggregated_data$name, "country.name", "iso3c")
+  
+  world <- ne_countries(scale = "medium", returnclass = "sf")
+  map_data <- world |>
+    left_join(aggregated_data, by = c("iso_a3" = "name"))
+  
+  ggplot(map_data) +
+    geom_sf(aes(fill = n), color = "white", size = 0.2) +
+    scale_fill_continuous(
+      low = "lightblue", high = "darkblue",
+      na.value = "grey50",  # Color for countries with no data
+      name = "Number of Trials"
+    ) +
+    labs(title = "Number of Clinical Trials per Country") +
+    theme_void()
+}
+
 
 plot_concurrent_studies = function(studies) {
   plot(mtcars$mpg, mtcars$cyl)
