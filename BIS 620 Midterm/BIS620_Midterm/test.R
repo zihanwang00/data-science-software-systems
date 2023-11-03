@@ -4,6 +4,7 @@ library(tidyr)
 source("ct-util.R")
 
 
+
 # test for Feature 1
 library(countrycode)
 library(rnaturalearth)
@@ -34,4 +35,24 @@ ggplot(map_data) +
   labs(title = "Trials per Country") +
   theme_void()
 
+# Test For Feature 2
+study = studies |> 
+  head(max_num_studies) |>
+  collect()
+
+condition = conditions |> 
+  collect()
+
+num_con = study |>
+  left_join(condition, by="nct_id") |>
+  select(name)|>
+  group_by(name)|>
+  summarize(n=n(), .groups = "drop") |>
+  arrange(desc(n))|>
+  head(10)
+ggplot(num_con, aes(x=name, y=n)) +
+  geom_col()+
+  theme_bw()+
+  xlab("Condition")+
+  ylab("Count")
 
