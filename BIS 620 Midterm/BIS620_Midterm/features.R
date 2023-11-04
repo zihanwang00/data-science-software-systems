@@ -21,7 +21,7 @@
 
 
 
-# Feature 4: Create a intervention keyword search to create pie chart.
+# Feature 4: Pie chart of Outcome types based on different Interventions.
 #' @title 
 #' @description 
 #' @motivation 
