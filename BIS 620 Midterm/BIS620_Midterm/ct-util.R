@@ -26,6 +26,11 @@ studies = tbl(con, "studies")
 sponsors = tbl(con, "sponsors")
 conditions = tbl(con, "conditions")
 countries = tbl(con, "countries")
+outcomes = tbl(con, "outcomes")
+interventions = tbl(con, "interventions")
+interventions_local=interventions |>
+  collect()
+
 
 # Q1: get unique phase_levels
 phase_levels <- studies |>
@@ -169,19 +174,21 @@ plot_concurrent_studies = function(studies) {
 #' @param d the studies to get the number of studies trials for.
 
 get_outcome_pie_for_intervention <- function(interventionType) {
-  # Filter interventions based on the specified intervention type
-  interventions= tbl(con,"interventions")
-  outcomes=tbl(con,"outcomes")
-  selected_interventions <- interventions |>
-    filter(intervention_type == interventionType)
   
-  # Join with outcomes
-  intervention_outcomes <- selected_interventions |>
+  interventions <- tbl(con, "interventions")
+  outcomes <- tbl(con, "outcomes")
+  
+  selected_interventions <- interventions %>%
+    filter(intervention_type == interventionType)      
+  # join outcomes and interventions:  
+  intervention_outcomes <- selected_interventions %>%
     left_join(outcomes, by = "nct_id")
   
   num_outcomes <- intervention_outcomes |>
     count(outcome_type) |>
     arrange(desc(n))
+  
+  num_outcomes
   
   # Generate pie chart
   ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
