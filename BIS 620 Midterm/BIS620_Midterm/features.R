@@ -17,3 +17,16 @@
 #' @param 
 #' @param 
 #' @param 
+
+
+
+
+# Feature 4: Create a intervention keyword search to create pie chart.
+#' @title 
+#' @description 
+#' @motivation 
+#' @implementation
+#' 
+#' @param 
+#' @param 
+#' @param 
