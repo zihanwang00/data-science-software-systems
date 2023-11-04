@@ -141,9 +141,9 @@ server <- function(input, output) {
 
   ############## feature 4: Add a search for outcomes.##############
   output$outcomePieChart <- renderPlot({
-    get_studies()|>
-    get_outcome_pie_for_intervention(input$interventionType)
-  })
+    interventionTypes <- input$interventionType
+    get_outcome_pie_for_intervention(interventionTypes)
+  }))
   
 }
 
