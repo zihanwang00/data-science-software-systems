@@ -60,27 +60,23 @@ ggplot(num_con, aes(x=name, y=n)) +
 ######################################################################
 #################### Test for feature 4: Search on Interventions, ####
 ####################  return pie chart of outcomes. ##################
-# get outcomes:
-outcomes = tbl(con, "outcomes")
-outcomes_local = outcomes |>
-  collect()
-# get interventions:
-interventions_local = interventions |>
-  collect()
-
-selected_interventions <- interventions |>
-  filter(name == intervention_type)
-
-intervention_outcomes <- selected_interventions |>
-  left_join(outcomes, by = "nct_id")
-
-# Count the different outcome types
-num_outcomes <- intervention_outcomes |>
-  count(outcome_type) |>
-  arrange(desc(n))
 # Function to generate a pie chart based on outcome types for a given intervention
-get_outcome_pie_for_intervention <- function(interventionType, interventions, outcomes) {
+get_outcome_pie_for_intervention <- function(interventionType) {
+  
+  interventions <- tbl(con, "interventions")
+  outcomes <- tbl(con, "outcomes")
+  
+  selected_interventions <- interventions %>%
+    filter(intervention_type == interventionType)      
+  # join outcomes and interventions:  
+  intervention_outcomes <- selected_interventions %>%
+    left_join(outcomes, by = "nct_id")
+  
+  num_outcomes <- intervention_outcomes |>
+    count(outcome_type) |>
+    arrange(desc(n))
 
+  num_outcomes
   
   # Generate pie chart
   ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
@@ -90,7 +86,5 @@ get_outcome_pie_for_intervention <- function(interventionType, interventions, ou
     labs(fill = "Outcome Type")
 }
 
-# Test the function with an example intervention name
-pie_chart <- get_outcome_pie_for_intervention("Drug", interventions_local, outcomes_local)
-print(pie_chart)
+get_outcome_pie_for_intervention("Drug")
 ##############################################
