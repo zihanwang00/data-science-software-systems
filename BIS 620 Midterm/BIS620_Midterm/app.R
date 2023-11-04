@@ -136,6 +136,14 @@ server <- function(input, output) {
       rename(`NCT ID` = nct_id, `Brief Title` = brief_title,
              `Start Date` = start_date, `Completion Date` = completion_date)
   })
+
+
+
+  ############## feature 4: Add a search for outcomes.##############
+  output$outcomePieChart <- renderPlot({
+    get_studies()|>
+    get_outcome_pie_for_intervention(input$interventionType)
+  })
   
 }
 
