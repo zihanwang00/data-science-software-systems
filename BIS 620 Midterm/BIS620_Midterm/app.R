@@ -37,6 +37,12 @@ ui <- fluidPage(
                                  "Unknown" = "Unknown"),
                   multiple = TRUE),
     ),
+
+ ################ Feature 4:search by Outcome Types.#################
+      selectInput("interventionType", 
+                  label = h3("Choose an Intervention"),
+                  choices = c("All", unique(interventions_local$intervention_type)))
+    ),
     
     # Show a plot of the generated distribution
     mainPanel(
@@ -46,6 +52,7 @@ ui <- fluidPage(
         tabPanel("Concurrent", plotOutput("concurrent_plot")),
         tabPanel("Conditions", plotOutput("condition_plot")),
         tabPanel("World Map", plotOutput("world_map_plot")),
+        tabPanel("Outcome Types", plotOutput("outcomePieChart") ###feature 4
       ),
       dataTableOutput("trial_table")
     )
