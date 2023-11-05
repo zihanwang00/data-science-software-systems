@@ -41,7 +41,18 @@ ui <- fluidPage(
       ################ Feature 4:search by Outcome Types.#################
       selectInput("interventionType", 
                   label = h3("Choose an Intervention"),
-                  choices = c("All", unique(interventions_local$intervention_type))),
+                  choices = c("Drug"="Drug",
+                              "Behavioral"="Behavioral",
+                              "Other"="Other",
+                              "Diagnostic test"="Diagnostic Test",
+                              "Device"="Device",
+                              "Procedure"="Procedure",
+                              "Genetic"="Genetic",
+                              "Dietary Supplement"="Dietary Supplement",
+                              "Combination Product"="Combination Product",
+                              "Biological"="Biological",
+                              "Radiation"="Radiation"
+                  ))
       
     ),
 
@@ -53,7 +64,8 @@ ui <- fluidPage(
         tabPanel("Concurrent", plotOutput("concurrent_plot")),
         tabPanel("Conditions", plotOutput("condition_plot")),
         tabPanel("World Map", plotOutput("world_map_plot")),
-        tabPanel("Outcome Types", plotOutput("outcomePieChart")), ###feature 4
+        tabPanel("Outcome Types", plotOutput("outcomePieChart")), #### feature 4
+        tabPanel("Condition Bar Plot", plotOutput("conditionsPlot")) #### feature 3
       ),
       dataTableOutput("trial_table")
     )
@@ -154,7 +166,11 @@ server <- function(input, output) {
     interventionTypes <- input$interventionType
     get_outcome_pie_for_intervention(interventionTypes)
   })
-
+  
+  ############# feature 3: Intervention-Condition mapping.##########
+  output$conditionsPlot <- renderPlot({
+    get_conditions_for_intervention_type(input$interventionType)
+  })
   
   # output$trial_table = renderDataTable({
   #   get_studies() |> 
