@@ -139,6 +139,6 @@
 # which country they’d like to see more information on. This is run through the function, count_country_id(country_df).
 
 #' 
-#' @param input$country_df
+#' @param input$countries
 #' @param 
 #' @param 
