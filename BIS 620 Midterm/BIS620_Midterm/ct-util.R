@@ -10,6 +10,11 @@ library(countrycode)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(RColorBrewer)
+library(wordcloud)
+library(RColorBrewer)
+library(wordcloud2)
+library(tm)
+
 
 
 con = dbConnect(
