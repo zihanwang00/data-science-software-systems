@@ -36,7 +36,7 @@ interventions = tbl(con, "interventions")
 interventions_local=interventions |>
   collect()
 
-##### Feature 6: Filter out details on individual countries
+##### Feature 5: Filter out details on individual countries
 countries_df <- data.frame(countries)
 filtered_countries <- countries_df %>%
   filter(!removed) %>%
@@ -147,9 +147,9 @@ get_condition_histogram = function(study, condition) {
   return(num_con)
 }
 
-# Feature 1: Map of trials
-# Create a map showing the number of trials in each country by a brief title keyword search
-#' @param d the studies to get the number of studies trials for.
+##################################################################
+####### Feature 1 : Map of trials  ###############################
+##################################################################
 
 plot_country_map <- function(d){
   countries$name[is.na(countries$name)] = "NA"
@@ -181,29 +181,6 @@ plot_concurrent_studies = function(studies) {
   plot(mtcars$mpg, mtcars$cyl)
 }
 
-
-###############################################################
-########### #Feature 4 : Search on Interventions.##############
-###############################################################
-
-get_outcome_pie_for_intervention <- function(interventionType) {
-  
-  
-  num_outcomes <- interventions |>
-    filter(intervention_type %in% interventionType) |>
-    left_join(outcomes, by = "nct_id") |>
-    count(outcome_type) |>
-    arrange(desc(n))
-  
-  # Generate pie chart
-  ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
-    geom_bar(stat = "identity", width = 1) +
-    coord_polar("y", start = 0) +
-    theme_void() +
-    labs(fill = "Outcome Type")
-}
-
-
 ##################################################################
 ####### Feature 3 : Interventions on Condition Mapping ############
 ##################################################################
@@ -233,10 +210,62 @@ get_conditions_for_intervention_type <- function(interventionType) {
     theme(axis.text.y = element_text(angle = 0))
   
 }
+
+
+###############################################################
+########### #Feature 4 : Search on Interventions.##############
+###############################################################
+
+get_outcome_pie_for_intervention <- function(interventionType) {
+  
+  
+  num_outcomes <- interventions |>
+    filter(intervention_type %in% interventionType) |>
+    left_join(outcomes, by = "nct_id") |>
+    count(outcome_type) |>
+    arrange(desc(n))
+  
+  # Generate pie chart
+  ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
+    geom_bar(stat = "identity", width = 1) +
+    coord_polar("y", start = 0) +
+    theme_void() +
+    labs(fill = "Outcome Type")
+}
+
+
+######################################################################
+#################### Test for feature 5: ID count ##################
+#################### Count number of IDs per country ################
+# Function to number of ID's from selection of individual countries 
+
+count_country_id <- function(country, countries) {
+  countries_df <- data.frame(countries)
+  filtered_countries <- countries_df %>%
+    filter(!removed) %>%
+    group_by(name) %>%
+    summarise(n = n()) %>% 
+    rename(ID_count = n)
+  
+  # Find the row matching the specified country
+  country_row <- filtered_countries %>%
+    filter(name == country)
+  
+  # Print the row (if found)
+  if (nrow(country_row) > 0) {
+    print(country_row)
+  } else {
+    cat("Country not found.")
+  }
+}
+
+count_country_id("United States", countries)
+
+
 #################################################################
 
 ##################################################################
-####### Feature 5: Word Cloud of Conditions ######################
+####### Feature 6: Word Cloud of Conditions ######################
 ##################################################################
 word_cloud <- function(study, condition){
   num_con = study |>
