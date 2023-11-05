@@ -6,6 +6,9 @@
 #
 #    http://shiny.rstudio.com/
 #
+#   Team Members:
+#   Zhihan Wang, Sara Shen, Kelly Wang.
+#
 
 library(shiny)
 
