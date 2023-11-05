@@ -41,21 +41,9 @@ ui <- fluidPage(
       ################ Feature 4:search by Outcome Types.#################
       selectInput("interventionType", 
                   label = h3("Choose an Intervention"),
-                  choices = c("Drug"="Drug",
-                              "Behavioral"="Behavioral",
-                              "Other"="Other",
-                              "Diagnostic test"="Diagnostic Test",
-                              "Device"="Device",
-                              "Procedure"="Procedure",
-                              "Genetic"="Genetic",
-                              "Dietary Supplement"="Dietary Supplement",
-                              "Combination Product"="Combination Product",
-                              "Biological"="Biological",
-                              "Radiation"="Radiation"
-                  ))
-      
+                  choices = c(unique(interventions_local$intervention_type))),
     ),
-
+    
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(
@@ -63,9 +51,15 @@ ui <- fluidPage(
         tabPanel("Phase", plotOutput("phase_plot")),
         tabPanel("Concurrent", plotOutput("concurrent_plot")),
         tabPanel("Conditions", plotOutput("condition_plot")),
-        tabPanel("World Map", plotOutput("world_map_plot")),
+        tabPanel("World Map", 
+                 ######### Feature 6: Add dropdown for selecting a country ########
+                 selectInput("world_map_country", "Select a country:", choices = names_countries),
+                 plotOutput("world_map_plot"),
+                 textOutput("country_info")
+        ),
         tabPanel("Outcome Types", plotOutput("outcomePieChart")), #### feature 4
-        tabPanel("Condition Bar Plot", plotOutput("conditionsPlot")) #### feature 3
+        tabPanel("Condition Bar Plot", plotOutput("conditionsPlot")), #### feature 3
+        tabPanel("Word Cloud", plotOutput("world_cloud_plot")), #### feature 5
       ),
       dataTableOutput("trial_table")
     )
@@ -99,7 +93,8 @@ server <- function(input, output) {
     
   })
   
-  # Feature2: Add a conditions input to search for conditions based on keywords
+  ############## feature 2: Conditions keyword input. ##############
+  ######### Add a conditions input to search for conditions ########
   get_conditions = reactive({
     if (input$condition_kw != "") {
       si = input$condition_kw |>
@@ -153,18 +148,14 @@ server <- function(input, output) {
       ylab("Count") + 
       title("Top 6 Conditions by Condition Name") + 
       theme(axis.text.x = element_text(angle = 30, hjust = 1))
-
+    
   })
   
+  ############# feature 1: World Map plot.##########################
   output$world_map_plot = renderPlot({
+    selected_country <- input$world_map_country 
     get_studies()|>
       plot_country_map()
-  })
-  
-  ############## feature 4: Add a search for outcomes.##############
-  output$outcomePieChart <- renderPlot({
-    interventionTypes <- input$interventionType
-    get_outcome_pie_for_intervention(interventionTypes)
   })
   
   ############# feature 3: Intervention-Condition mapping.##########
@@ -172,14 +163,30 @@ server <- function(input, output) {
     get_conditions_for_intervention_type(input$interventionType)
   })
   
-  # output$trial_table = renderDataTable({
-  #   get_studies() |> 
-  #     select(nct_id, brief_title, start_date, completion_date) |>
-  #     rename(`NCT ID` = nct_id, `Brief Title` = brief_title,
-  #            `Start Date` = start_date, `Completion Date` = completion_date)
-  # })
-
-
+  
+  ############## feature 4: Add a search for outcomes.##############
+  output$outcomePieChart <- renderPlot({
+    interventionTypes <- input$interventionType
+    get_outcome_pie_for_intervention(interventionTypes)
+  })
+  
+  
+  ############## feature 5: Word cloud of conditions.##############
+  output$world_cloud_plot = renderPlot({
+    studies <- get_studies()
+    conditions <- get_conditions()
+    
+    word_cloud(studies, conditions)
+  })
+  
+  ######### Feature 6: Add dropdown for selecting a country ########
+  output$country_info <- renderText({
+    selected_country <- input$world_map_country
+    selected_data <- filtered_countries %>%
+      filter(name %in% selected_country)
+    paste("Country: ", selected_country, "|",
+          "Number of IDs: ", selected_data$ID_count[1], "\n")
+  })
 }
 
 # Run the application 

@@ -1,11 +1,13 @@
 library(dplyr)
 library(tidyr)
-
 source("ct-util.R")
 
 
 
-# test for Feature 1
+############################################################################
+#################### Test for feature 1: World Map #########################
+#################### test if a map can be returned #########################
+
 library(countrycode)
 library(rnaturalearth)
 library(rnaturalearthdata)
@@ -35,7 +37,10 @@ ggplot(map_data) +
   labs(title = "Trials per Country") +
   theme_void()
 
-# Test For Feature 2
+############################################################################
+#################### Test for feature 2: Keyword Search on Conditions, #####
+####################  test if histogram works as expected ##################
+
 study = studies |> 
   head(max_num_studies) |>
   collect()
@@ -75,7 +80,7 @@ get_outcome_pie_for_intervention <- function(interventionType) {
   num_outcomes <- intervention_outcomes |>
     count(outcome_type) |>
     arrange(desc(n))
-
+  
   num_outcomes
   
   # Generate pie chart
@@ -89,7 +94,7 @@ get_outcome_pie_for_intervention <- function(interventionType) {
 get_outcome_pie_for_intervention("Drug")
 
 ######################################################################
-####### Feature 3: Intervention - Condition Mapping. ################
+####### Test For feature 3: Intervention - Condition Mapping. ################
 ######################################################################
 get_conditions_for_intervention_type <- function(interventionType) {
   # Ensure global variables are accessible
@@ -123,4 +128,22 @@ get_conditions_for_intervention_type <- function(interventionType) {
 
 get_conditions_for_intervention_type("Drug")
 
+######################################################################
+#################### Test for feature 5: Word Cloud ##################
+#################### Create Word Cloud of Conditions. ################
+# Function to generate a pie chart based on outcome types for a given intervention
+num_con = studies |>
+  inner_join(conditions, by="nct_id") |>
+  collect() # delete later
+
+corpus <- Corpus(VectorSource(num_con$name))
+corpus <- tm_map(corpus, content_transformer(tolower))
+corpus <- tm_map(corpus, removePunctuation)
+corpus <- tm_map(corpus, removeNumbers)
+corpus <- tm_map(corpus, removeWords, stopwords("en"))
+corpus <- tm_map(corpus, stripWhitespace)
+
+wordcloud(words = corpus, scale=c(5,0.5), max.words=100, random.order=FALSE, colors=brewer.pal(8, "Dark2"))
+
+##############################################
 
