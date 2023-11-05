@@ -19,9 +19,40 @@
 #' @param 
 
 
+# Feature 3: Create a condition keyword search to filter condition plot, update on condition plot
+#' @title Condition Keyword Search
+#' @description 
+#' @motivation 
+#' @implementation
+#' 
+#' @param 
+#' @param 
+#' @param 
 
 
 # Feature 4: Pie chart of Outcome types based on different Interventions.
+#' @title 
+#' @description 
+#' @motivation 
+#' @implementation
+#' 
+#' @param 
+#' @param 
+#' @param 
+
+
+# Feature 5: Create a condition keyword search to filter condition plot, update on condition plot
+#' @title Condition Keyword Search
+#' @description 
+#' @motivation 
+#' @implementation
+#' 
+#' @param 
+#' @param 
+#' @param 
+
+
+# Feature 6: Pie chart of Outcome types based on different Interventions.
 #' @title 
 #' @description 
 #' @motivation 
