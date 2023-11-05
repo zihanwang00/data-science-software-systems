@@ -7,7 +7,7 @@
 #    http://shiny.rstudio.com/
 #
 #   Team Members:
-#   Zhihan Wang, Sara Shen, Kelly Wang.
+#   Zihan Wang, Sara Shen, Kelly Wang.
 #
 
 library(shiny)
@@ -96,7 +96,7 @@ server <- function(input, output) {
     
   })
   
-  ############## feature 2: Conditions keyword input. ##############
+  ############## Feature 2: Conditions keyword input. ##############
   ######### Add a conditions input to search for conditions ########
   get_conditions = reactive({
     if (input$condition_kw != "") {
@@ -137,9 +137,9 @@ server <- function(input, output) {
       theme_bw()
   })
   
-  ############# condition_plot
+  ############# Condition_plot
   output$condition_plot = renderPlot({
-    ############## feature 2: Update on Condition.##############
+    ############## Feature 2: Update on Condition.##############
     study = get_studies()
     condition = get_conditions()
     condition_data <- get_condition_histogram(study, condition) 
@@ -172,17 +172,9 @@ server <- function(input, output) {
     interventionTypes <- input$interventionType
     get_outcome_pie_for_intervention(interventionTypes)
   })
+
   
-  
-  ############## feature 5: Word cloud of conditions.##############
-  output$world_cloud_plot = renderPlot({
-    studies <- get_studies()
-    conditions <- get_conditions()
-    
-    word_cloud(studies, conditions)
-  })
-  
-  ######### Feature 6: Add dropdown for selecting a country ########
+  ######### Feature 5: Add dropdown for selecting a country ########
   output$country_info <- renderText({
     selected_country <- input$world_map_country
     selected_data <- filtered_countries %>%
@@ -191,6 +183,14 @@ server <- function(input, output) {
           "Number of Trials: ", selected_data$ID_count[1], "\n")
   })
 }
+
+  ############## feature 6: Word cloud of conditions.##############
+  output$world_cloud_plot = renderPlot({
+    studies <- get_studies()
+    conditions <- get_conditions()
+    
+    word_cloud(studies, conditions)
+  })
 
 # Run the application 
 shinyApp(ui = ui, server = server)
