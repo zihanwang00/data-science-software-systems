@@ -87,4 +87,40 @@ get_outcome_pie_for_intervention <- function(interventionType) {
 }
 
 get_outcome_pie_for_intervention("Drug")
-##############################################
+
+######################################################################
+####### Feature 3: Intervention - Condition Mapping. ################
+######################################################################
+get_conditions_for_intervention_type <- function(interventionType) {
+  # Ensure global variables are accessible
+  interventions <- tbl(con, "interventions")
+  conditions <- tbl(con, "conditions")
+  
+  intervention_studies <- interventions |>
+    filter(intervention_type == interventionType) |>
+    select(nct_id) |>
+    distinct()
+  
+  conditions_for_intervention <- conditions |>
+    inner_join(intervention_studies, by = "nct_id") |>
+    select(name) |>
+    count(name, sort = TRUE) |>
+    collect()
+  
+  top_conditions <- conditions_for_intervention %>%
+    slice_max(n, n = 10)
+  top_conditions
+  
+  ggplot(top_conditions, aes(x = reorder(name, n), y = n)) +
+    geom_bar(stat = "identity", fill = 'steelblue') +
+    coord_flip() +  
+    labs(y = "Condition", x = "Count", 
+         title = paste("Top 10 Conditions for", interventionType)) +
+    theme_minimal() +
+    theme(axis.text.y = element_text(angle = 0))
+  
+}
+
+get_conditions_for_intervention_type("Drug")
+
+
