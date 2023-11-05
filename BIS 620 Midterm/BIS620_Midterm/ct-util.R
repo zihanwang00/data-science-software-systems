@@ -170,15 +170,15 @@ plot_concurrent_studies = function(studies) {
 
 ###############################################################
 ########### #Feature 4 : Search on Interventions.##############
-#' @param d the studies to get the number of studies trials for.
+###############################################################
 
 get_outcome_pie_for_intervention <- function(interventionType) {
   
   
-  selected_interventions <- interventions %>%
+  selected_interventions <- interventions |>
     filter(intervention_type == interventionType)      
   # join outcomes and interventions:  
-  intervention_outcomes <- selected_interventions %>%
+  intervention_outcomes <- selected_interventions |>
     left_join(outcomes, by = "nct_id")
   
   num_outcomes <- intervention_outcomes |>
@@ -193,3 +193,39 @@ get_outcome_pie_for_intervention <- function(interventionType) {
     theme_void() +
     labs(fill = "Outcome Type")
 }
+
+
+##################################################################
+####### Feature 3 : Interventions on Condition Mapping ############
+##################################################################
+get_conditions_for_intervention_type <- function(interventionType) {
+  # Ensure global variables are accessible
+  interventions <- tbl(con, "interventions")
+  conditions <- tbl(con, "conditions")
+  
+  intervention_studies <- interventions |>
+    filter(intervention_type == interventionType) |>
+    select(nct_id) |>
+    distinct()
+  
+  conditions_for_intervention <- conditions |>
+    inner_join(intervention_studies, by = "nct_id") |>
+    select(name) |>
+    count(name, sort = TRUE) |>
+    collect()
+  
+  top_conditions <- conditions_for_intervention %>%
+    slice_max(n, n = 10)
+  top_conditions
+  
+  ggplot(top_conditions, aes(x = reorder(name, n), y = n)) +
+    geom_bar(stat = "identity", fill = 'steelblue') +
+    coord_flip() +  
+    labs(y = "Condition", x = "Count", 
+         title = paste("Top 10 Conditions for", interventionType)) +
+    theme_minimal() +
+    theme(axis.text.y = element_text(angle = 0))
+  
+}
+#################################################################
+
