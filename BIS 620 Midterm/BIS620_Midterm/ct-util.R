@@ -14,7 +14,7 @@ library(RColorBrewer)
 
 con = dbConnect(
   duckdb(
-    file.path("..", "..", "2023-09-27", "ctgov.duckdb"), 
+    file.path("..", "..", "2023-09-27", "ctgov1.duckdb"), 
     read_only = TRUE
   )
 )
@@ -30,7 +30,6 @@ outcomes = tbl(con, "outcomes")
 interventions = tbl(con, "interventions")
 interventions_local=interventions |>
   collect()
-
 
 # Q1: get unique phase_levels
 phase_levels <- studies |>
@@ -175,8 +174,6 @@ plot_concurrent_studies = function(studies) {
 
 get_outcome_pie_for_intervention <- function(interventionType) {
   
-  interventions <- tbl(con, "interventions")
-  outcomes <- tbl(con, "outcomes")
   
   selected_interventions <- interventions %>%
     filter(intervention_type == interventionType)      
@@ -188,7 +185,6 @@ get_outcome_pie_for_intervention <- function(interventionType) {
     count(outcome_type) |>
     arrange(desc(n))
   
-  num_outcomes
   
   # Generate pie chart
   ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
