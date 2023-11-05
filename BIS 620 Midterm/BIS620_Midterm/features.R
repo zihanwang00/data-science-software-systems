@@ -110,7 +110,7 @@
 #' @implementation We create a new tab for the word cloud map feature. Within that feature, we created a function that does a count of their 
 # varying degrees of frequency from the text corpus. From there, based on the frequency value, we dilate the size of the given word to normalize
 # the word along with its frequency count. Afterwards, it is also color coded by the weights of frequencies as well, allowing a visual 
-# categorization that distinguishes each of the words on the screen. This is all done through the function word_cloud(study, condition). 
+# categorization that distinguishes each of the words on the screen. This is all done through the function word_cloud(country, countries). 
 #' 
 #' @param study
 #' @param condition
