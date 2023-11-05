@@ -48,7 +48,7 @@
 
 
 
-# Feature 3: Create Bar Charts based on different Intervention.
+# Feature 3: Create Bar Charts of Top 10 Conditions based on different Intervention.
 #' @title Intervention and Condition Mapping
 #' @description This feature is accessible through the buttons labeled “Choose an Intervention” and “Condition Bar Plot”. 
 # This provides users with the ability to select an intervention type and see a list of conditions that are 
