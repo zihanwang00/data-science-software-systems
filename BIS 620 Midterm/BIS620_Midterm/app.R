@@ -150,7 +150,7 @@ server <- function(input, output) {
   output$outcomePieChart <- renderPlot({
     interventionTypes <- input$interventionType
     get_outcome_pie_for_intervention(interventionTypes)
-  }))
+  })
   
 }
 
