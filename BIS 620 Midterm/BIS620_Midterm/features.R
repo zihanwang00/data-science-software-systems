@@ -107,9 +107,10 @@
 # had too many ID’s such as the US with 167,299 ID’s. It would not have been beneficial for the user to see the ID’s all clustered on top of the map 
 # and would also make for a visually more confusing experience. Hence, we compose a dataframe of unique countries and their corresponding total counted 
 # number of ID’s. Afterwards, the intent in mind is to let the viewer see the holistic picture of the map and based off that, make their judgment on 
-# which country they’d like to see more information on. This is run through the function, count_country_id(country_df).
+# which country they’d like to see more information on. This is run through the function, count_country_id(country, country_df).
 
 #' 
+#' @param input$country
 #' @param input$countries
 
 
