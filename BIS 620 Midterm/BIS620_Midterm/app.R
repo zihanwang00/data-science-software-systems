@@ -23,6 +23,8 @@ ui <- fluidPage(
     position = 'left',
     sidebarPanel(
       textInput("brief_title_kw", h3("Brief Title Keywords")),
+      ################ Feature 2:search by Conditions.#################
+      ################ Apply to first 3 tabs. #################
       textInput("condition_kw", h3("Condition Names")),
       # Q3: Add a drop-down on sponsor type
       selectInput("source_class", 
@@ -36,14 +38,13 @@ ui <- fluidPage(
                                  "Other gov" = "OTHER_GOV", 
                                  "Unknown" = "Unknown"),
                   multiple = TRUE),
-    ),
-
- ################ Feature 4:search by Outcome Types.#################
+      ################ Feature 4:search by Outcome Types.#################
       selectInput("interventionType", 
                   label = h3("Choose an Intervention"),
-                  choices = c("All", unique(interventions_local$intervention_type)))
+                  choices = c("All", unique(interventions_local$intervention_type))),
+      
     ),
-    
+
     # Show a plot of the generated distribution
     mainPanel(
       tabsetPanel(
@@ -52,12 +53,13 @@ ui <- fluidPage(
         tabPanel("Concurrent", plotOutput("concurrent_plot")),
         tabPanel("Conditions", plotOutput("condition_plot")),
         tabPanel("World Map", plotOutput("world_map_plot")),
-        tabPanel("Outcome Types", plotOutput("outcomePieChart") ###feature 4
+        tabPanel("Outcome Types", plotOutput("outcomePieChart")), ###feature 4
       ),
       dataTableOutput("trial_table")
     )
   )
 )
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -100,13 +102,22 @@ server <- function(input, output) {
       collect()
   })
   
+  ############# phase_plot
   output$phase_plot = renderPlot({
-    get_studies() |>
+    studies <- get_studies()
+    conditions <- get_conditions()
+    
+    studies |>
+      left_join(conditions, by="nct_id") |>
       plot_phase_histogram()
   })
-  
+  ############# concurrent_plot
   output$concurrent_plot = renderPlot({
-    get_studies() |>
+    studies <- get_studies()
+    conditions <- get_conditions()
+    
+    studies |>
+      left_join(conditions, by="nct_id") |>
       select(start_date, completion_date) |>
       get_concurrent_trials() |>
       ggplot(aes(x = date, y = count)) +
@@ -116,8 +127,9 @@ server <- function(input, output) {
       theme_bw()
   })
   
+  ############# condition_plot
   output$condition_plot = renderPlot({
-    # Feature2: update on condition plot
+    ############## feature 2: Update on Condition.##############
     study = get_studies()
     condition = get_conditions()
     condition_data <- get_condition_histogram(study, condition) 
@@ -137,6 +149,13 @@ server <- function(input, output) {
       plot_country_map()
   })
   
+  ############## feature 4: Add a search for outcomes.##############
+  output$outcomePieChart <- renderPlot({
+    interventionTypes <- input$interventionType
+    get_outcome_pie_for_intervention(interventionTypes)
+  })
+  
+  
   output$trial_table = renderDataTable({
     get_studies() |> 
       select(nct_id, brief_title, start_date, completion_date) |>
@@ -146,12 +165,8 @@ server <- function(input, output) {
 
 
 
-  ############## feature 4: Add a search for outcomes.##############
-  output$outcomePieChart <- renderPlot({
-    interventionTypes <- input$interventionType
-    get_outcome_pie_for_intervention(interventionTypes)
-  }))
-  
+
+
 }
 
 # Run the application 
