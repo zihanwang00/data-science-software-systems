@@ -54,8 +54,8 @@ ui <- fluidPage(
         tabPanel("World Map", 
                  ######### Feature 6: Add dropdown for selecting a country ########
                  selectInput("world_map_country", "Select a country:", choices = names_countries),
-                 plotOutput("world_map_plot"),
-                 textOutput("country_info")
+                 textOutput("country_info"),
+                 plotOutput("world_map_plot")
         ),
         tabPanel("Outcome Types", plotOutput("outcomePieChart")), #### feature 4
         tabPanel("Condition Bar Plot", plotOutput("conditionsPlot")), #### feature 3
@@ -185,7 +185,7 @@ server <- function(input, output) {
     selected_data <- filtered_countries %>%
       filter(name %in% selected_country)
     paste("Country: ", selected_country, "|",
-          "Number of IDs: ", selected_data$ID_count[1], "\n")
+          "Number of Trials: ", selected_data$ID_count[1], "\n")
   })
 }
 
