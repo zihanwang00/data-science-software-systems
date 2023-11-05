@@ -27,8 +27,7 @@
 # the colors onto the countries based on the number of ID’s. We also added an additional feature #5 that will supplement the information here as well.
 #' 
 #' @param the studies to get the number of studies trials for.
-#' @param 
-#' @param 
+
 
 
 
@@ -45,8 +44,7 @@
 # It allows users to see the conditions related to certain keywords, and gives us the bar plots regarding different conditions. 
 #' 
 #' @param input$condition_kw
-#' @param 
-#' @param 
+
 
 
 
@@ -73,6 +71,7 @@
 
 
 
+
 # Feature 4: Pie Charts of Outcome Types based on different Interventions.
 #' @title Pie Chart for outcomes
 #' @description In our R shiny app, we have a new tab named, Condition Pie Chart, where it displays the top 10 conditions based on 
@@ -90,8 +89,7 @@
 # then run through the function get_outcome_pie_for_intervention <- function(interventionType).
 #' 
 #' @param input$interventionType
-#' @param 
-#' @param 
+
 
 
 
@@ -116,13 +114,12 @@
 #' 
 #' @param study
 #' @param condition
-#' @param 
+
 
 
 
 # Feature 6: ID count of individual countries
 #' @title Add a dropdown for selecting a country
-
 #' @description If we reference back to feature #1, we notice that within the world heat map, we can see a tool that allows us to select one of 
 # the 223 presented countries that have information regarding the number of ID’s. After selecting a country, the viewer can see the following 
 # information presented: Country : “Country name” | Number of ID’s #
@@ -139,6 +136,5 @@
 # which country they’d like to see more information on. This is run through the function, count_country_id(country_df).
 
 #' 
-#' @param input$country_df
-#' @param 
-#' @param 
+#' @param input$countries
+
