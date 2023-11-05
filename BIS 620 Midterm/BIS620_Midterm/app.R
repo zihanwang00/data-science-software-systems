@@ -182,7 +182,7 @@ server <- function(input, output) {
     paste("Country: ", selected_country, "|",
           "Number of Trials: ", selected_data$ID_count[1], "\n")
   })
-}
+
 
   ############## feature 6: Word cloud of conditions.##############
   output$world_cloud_plot = renderPlot({
@@ -191,6 +191,7 @@ server <- function(input, output) {
     
     word_cloud(studies, conditions)
   })
-
+  
+}
 # Run the application 
 shinyApp(ui = ui, server = server)
