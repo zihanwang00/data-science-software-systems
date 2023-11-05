@@ -31,6 +31,15 @@ interventions = tbl(con, "interventions")
 interventions_local=interventions |>
   collect()
 
+##### Feature 6: Filter out details on individual countries
+countries_df <- data.frame(countries)
+filtered_countries <- countries_df %>%
+  filter(!removed) %>%
+  group_by(name) %>%
+  summarise(n =n()) %>% 
+  rename(ID_count = n)
+names_countries <- filtered_countries$name
+
 # Q1: get unique phase_levels
 phase_levels <- studies |>
   select(phase) |>
@@ -91,7 +100,7 @@ plot_phase_histogram = function(x) {
 #' @return A tibble with a `date` column and a `count` of the number of
 #' concurrent trials at that date.
 get_concurrent_trials = function(d) {
-
+  
   # Get all of the unique dates.
   all_dates = d |> 
     pivot_longer(cols = everything()) |> # make start_date, completion_date in one column
@@ -108,7 +117,7 @@ get_concurrent_trials = function(d) {
   # Get the number of concurrent trials at each of the unique dates.
   all_dates$count = 
     map_dbl(
-
+      
       all_dates$date, 
       ~ .x |> 
         within_date(d$start_date, d$completion_date) |>
@@ -129,7 +138,7 @@ get_condition_histogram = function(study, condition) {
     summarize(n=n(), .groups = "drop") |>
     arrange(desc(n))|>
     head(8)
-    
+  
   return(num_con)
 }
 
@@ -175,16 +184,11 @@ plot_concurrent_studies = function(studies) {
 get_outcome_pie_for_intervention <- function(interventionType) {
   
   
-  selected_interventions <- interventions |>
-    filter(intervention_type == interventionType)      
-  # join outcomes and interventions:  
-  intervention_outcomes <- selected_interventions |>
-    left_join(outcomes, by = "nct_id")
-  
-  num_outcomes <- intervention_outcomes |>
+  num_outcomes <- interventions |>
+    filter(intervention_type %in% interventionType) |>
+    left_join(outcomes, by = "nct_id") |>
     count(outcome_type) |>
     arrange(desc(n))
-  
   
   # Generate pie chart
   ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
@@ -199,9 +203,6 @@ get_outcome_pie_for_intervention <- function(interventionType) {
 ####### Feature 3 : Interventions on Condition Mapping ############
 ##################################################################
 get_conditions_for_intervention_type <- function(interventionType) {
-  # Ensure global variables are accessible
-  interventions <- tbl(con, "interventions")
-  conditions <- tbl(con, "conditions")
   
   intervention_studies <- interventions |>
     filter(intervention_type == interventionType) |>
@@ -229,3 +230,20 @@ get_conditions_for_intervention_type <- function(interventionType) {
 }
 #################################################################
 
+##################################################################
+####### Feature 5: Word Cloud of Conditions ######################
+##################################################################
+word_cloud <- function(study, condition){
+  num_con = study |>
+    inner_join(condition, by="nct_id")
+  
+  corpus <- Corpus(VectorSource(num_con$name))
+  corpus <- tm_map(corpus, content_transformer(tolower))
+  corpus <- tm_map(corpus, removePunctuation)
+  corpus <- tm_map(corpus, removeNumbers)
+  corpus <- tm_map(corpus, removeWords, stopwords("en"))
+  corpus <- tm_map(corpus, stripWhitespace)
+  
+  wordcloud(words = corpus, scale=c(5,0.5), max.words=100, random.order=FALSE, colors=brewer.pal(8, "Dark2"))
+}
+#################################################################
