@@ -1,7 +1,10 @@
 library(dplyr)
 library(tidyr)
 source("ct-util.R")
-
+library(wordcloud)
+library(RColorBrewer)
+library(wordcloud2)
+library(tm)
 
 
 ############################################################################
@@ -12,6 +15,7 @@ library(countrycode)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(RColorBrewer)
+
 
 countries$name[is.na(countries$name)] = "NA"
 
@@ -62,36 +66,6 @@ ggplot(num_con, aes(x=name, y=n)) +
   ylab("Count")
 
 
-######################################################################
-#################### Test for feature 4: Search on Interventions, ####
-####################  return pie chart of outcomes. ##################
-# Function to generate a pie chart based on outcome types for a given intervention
-get_outcome_pie_for_intervention <- function(interventionType) {
-  
-  interventions <- tbl(con, "interventions")
-  outcomes <- tbl(con, "outcomes")
-  
-  selected_interventions <- interventions %>%
-    filter(intervention_type == interventionType)      
-  # join outcomes and interventions:  
-  intervention_outcomes <- selected_interventions %>%
-    left_join(outcomes, by = "nct_id")
-  
-  num_outcomes <- intervention_outcomes |>
-    count(outcome_type) |>
-    arrange(desc(n))
-  
-  num_outcomes
-  
-  # Generate pie chart
-  ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
-    geom_bar(stat = "identity", width = 1) +
-    coord_polar("y", start = 0) +
-    theme_void() +
-    labs(fill = "Outcome Type")
-}
-
-get_outcome_pie_for_intervention("Drug")
 
 ######################################################################
 ####### Test For feature 3: Intervention - Condition Mapping. ################
@@ -128,8 +102,68 @@ get_conditions_for_intervention_type <- function(interventionType) {
 
 get_conditions_for_intervention_type("Drug")
 
+
+
 ######################################################################
-#################### Test for feature 5: Word Cloud ##################
+#################### Test for feature 4: Search on Interventions, ####
+####################  return pie chart of outcomes. ##################
+# Function to generate a pie chart based on outcome types for a given intervention
+get_outcome_pie_for_intervention <- function(interventionType) {
+  
+  interventions <- tbl(con, "interventions")
+  outcomes <- tbl(con, "outcomes")
+  
+  selected_interventions <- interventions %>%
+    filter(intervention_type == interventionType)      
+  # join outcomes and interventions:  
+  intervention_outcomes <- selected_interventions %>%
+    left_join(outcomes, by = "nct_id")
+  
+  num_outcomes <- intervention_outcomes |>
+    count(outcome_type) |>
+    arrange(desc(n))
+  
+  num_outcomes
+  
+  # Generate pie chart
+  ggplot(num_outcomes, aes(x = "", y = n, fill = outcome_type)) +
+    geom_bar(stat = "identity", width = 1) +
+    coord_polar("y", start = 0) +
+    theme_void() +
+    labs(fill = "Outcome Type")
+}
+
+get_outcome_pie_for_intervention("Drug")
+
+######################################################################
+#################### Test for feature 5: ID count ##################
+#################### Count number of IDs per country ################
+# Function to number of ID's from selection of individual countries 
+
+count_country_id <- function(country, countries) {
+  countries_df <- data.frame(countries)
+  filtered_countries <- countries_df %>%
+    filter(!removed) %>%
+    group_by(name) %>%
+    summarise(n = n()) %>% 
+    rename(ID_count = n)
+  
+  # Find the row matching the specified country
+  country_row <- filtered_countries %>%
+    filter(name == country)
+  
+  # Print the row (if found)
+  if (nrow(country_row) > 0) {
+    print(country_row)
+  } else {
+    cat("Country not found.")
+  }
+}
+
+count_country_id("United States", countries)
+
+######################################################################
+#################### Test for feature 6: Word Cloud ##################
 #################### Create Word Cloud of Conditions. ################
 # Function to generate a pie chart based on outcome types for a given intervention
 num_con = studies |>
