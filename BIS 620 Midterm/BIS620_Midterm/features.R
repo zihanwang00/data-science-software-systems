@@ -92,8 +92,29 @@
 
 
 
+# Feature 5: ID count of individual countries
+#' @title Add a dropdown for selecting a country
+#' @description If we reference back to feature #1, we notice that within the world heat map, we can see a tool that allows us to select one of 
+# the 223 presented countries that have information regarding the number of ID’s. After selecting a country, the viewer can see the following 
+# information presented: Country : “Country name” | Number of ID’s #
 
-# Feature 5: Word Cloud
+#' @motivation Within the world map, an additional modification that can help is to see the specific numbers. Even though the world map serves 
+# as a heat map to the varying levels of id count, from the viewer perspective, this may beg the question of “how many exactly” are there within 
+# each country- a supplemental yet crucial piece of information. 
+
+#' @implementation Within the code, we simplify and modify the portion of the original world map to include a selection bar of countries. 
+# Initially, we planned to list out the ID’s in a tabled format along with the NCT ID’s, however that overwhelmed the SHINY app since many countries 
+# had too many ID’s such as the US with 167,299 ID’s. It would not have been beneficial for the user to see the ID’s all clustered on top of the map 
+# and would also make for a visually more confusing experience. Hence, we compose a dataframe of unique countries and their corresponding total counted 
+# number of ID’s. Afterwards, the intent in mind is to let the viewer see the holistic picture of the map and based off that, make their judgment on 
+# which country they’d like to see more information on. This is run through the function, count_country_id(country_df).
+
+#' 
+#' @param input$countries
+
+
+
+# Feature 6: Word Cloud
 #' @title Word Cloud of Conditions
 #' @description Within the tab, we generated a word cloud of varying sizes. We notice here that the biggest word is cancer with disease 
 # following as second, which is understandable since a large subject at hand is about the disease, cancer, and the conditions as well as 
@@ -115,25 +136,3 @@
 #' @param study
 #' @param condition
 
-
-
-
-# Feature 6: ID count of individual countries
-#' @title Add a dropdown for selecting a country
-#' @description If we reference back to feature #1, we notice that within the world heat map, we can see a tool that allows us to select one of 
-# the 223 presented countries that have information regarding the number of ID’s. After selecting a country, the viewer can see the following 
-# information presented: Country : “Country name” | Number of ID’s #
-
-#' @motivation Within the world map, an additional modification that can help is to see the specific numbers. Even though the world map serves 
-# as a heat map to the varying levels of id count, from the viewer perspective, this may beg the question of “how many exactly” are there within 
-# each country- a supplemental yet crucial piece of information. 
-
-#' @implementation Within the code, we simplify and modify the portion of the original world map to include a selection bar of countries. 
-# Initially, we planned to list out the ID’s in a tabled format along with the NCT ID’s, however that overwhelmed the SHINY app since many countries 
-# had too many ID’s such as the US with 167,299 ID’s. It would not have been beneficial for the user to see the ID’s all clustered on top of the map 
-# and would also make for a visually more confusing experience. Hence, we compose a dataframe of unique countries and their corresponding total counted 
-# number of ID’s. Afterwards, the intent in mind is to let the viewer see the holistic picture of the map and based off that, make their judgment on 
-# which country they’d like to see more information on. This is run through the function, count_country_id(country_df).
-
-#' 
-#' @param input$countries
