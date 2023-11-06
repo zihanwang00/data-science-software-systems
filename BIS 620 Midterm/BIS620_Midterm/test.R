@@ -1,11 +1,9 @@
 library(dplyr)
 library(tidyr)
-source("ct-util.R")
 library(wordcloud)
 library(RColorBrewer)
-library(wordcloud2)
 library(tm)
-
+source("ct-util.R")
 
 ############################################################################
 #################### Test for feature 1: World Map #########################
@@ -44,6 +42,7 @@ ggplot(map_data) +
 ############################################################################
 #################### Test for feature 2: Keyword Search on Conditions, #####
 ####################  test if histogram works as expected ##################
+max_num_studies = 1000
 
 study = studies |> 
   head(max_num_studies) |>
